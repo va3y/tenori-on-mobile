@@ -6,11 +6,19 @@
           <td
             v-for="(button, rowIndex) in column"
             :key="rowIndex"
-            @mouseover="changeButton(columnIndex, rowIndex)"
-            @mouseup="changeButton(columnIndex, rowIndex)"
-            :class="[{ on: buttons[columnIndex][rowIndex].on }, btnStyle]"
-            class=""
-          ></td>
+          >
+          
+          <span
+          class="small-span"
+          @mouseover="changeButton(columnIndex, rowIndex)"
+          @mouseup="changeButton(columnIndex, rowIndex)"
+          :class="[{ on: buttons[columnIndex][rowIndex].on },
+          {ison: buttons[columnIndex][rowIndex].isHit }]"
+          :style="btnColor(columnIndex, rowIndex)">
+          <span v-show="buttons[columnIndex][rowIndex].isHit" class="ishit"></span>
+
+          </span>
+          </td>
         </tr>
       </table>
     </div>
@@ -20,8 +28,6 @@
 
 <script>
 import SoundMaker from "../helper";
-
-
 
 export default {
   name: "HelloWorld",
@@ -33,19 +39,17 @@ export default {
       buttons: [], //2-dimensional array
       btnStyle: "btnStyle",
       mouseDown: false,
-      soundMaker: new SoundMaker,
-      currStep: 0
-      
+      currStep: 0,
+      showAnimation: false
     };
   },
   created() {
     //let sound = new SoundMaker
     //sound.playSound();
     this.drawTable();
-    
   },
   mounted() {
-    this.animate();
+    this.startPlaying();
   },
   methods: {
     drawTable() {
@@ -56,6 +60,8 @@ export default {
             row: i,
             column: j,
             on: false,
+            isHit: false,
+            colorValue: 0,
           });
         }
       }
@@ -72,29 +78,82 @@ export default {
       this.mouseDown = isIt;
     },
 
-    animate() {
-      
-      setInterval(function() {
-        this.step(this.currStep)
-      if (this.currStep==15) {
-        this.currStep=0
-      } else {
-        this.currStep++
+    clearHits() {
+      for (let i = 0; i < 16; i++) {
+        for (let j = 0; j < 16; j++) {
+          this.buttons[j][i].isHit=false;
+          
+        }
       }
-      }.bind(this), 300);
-
     },
 
-    step(row) {
+    startPlaying() {
+      const soundMaker = new SoundMaker()
+
+      setInterval(
+        function () {
+          
+          
+          this.step(this.currStep, soundMaker);
+          
+          
+          if (this.currStep == 15) {
+            this.currStep = 0;
+            this.clearHits();
+            
+          } else {
+            this.currStep++;
+            
+          }
+        }.bind(this),
+        200 //speed
+      );
+    },
+
+    step(row, soundMaker) {
+      //soundMaker.map((sound)=> {sound.currentTime = 0});
+      
       for (let button = 0; button < 16; button++) {
         if (this.buttons[row][button].on) {
-          this.soundMaker.playSound(button);
+          
+          //this.animate(row, button);
+          this.buttons[row][button].isHit = true;
+          soundMaker.playSound(button);
         }
-      
+      }
+    },
 
-        
-      
-    }}
+    btnColor(col, row) {
+      if (!this.buttons[col][row].on) {
+      const colorValue = this.buttons[col][row].colorValue;
+      return `background-color: rgba(0,0,0,${colorValue})`;}
+    },
+    
+    animate(col, row) {
+      let distance = 1;
+      let colorValue = 1;
+      let speed = 1;
+      for (let index = 0; index < 5; index++) {
+        setTimeout(() => {
+          this.buttons[col + distance][row].colorValue = colorValue;
+          colorValue /= 2;
+          distance++;
+        }, speed*index);
+      }
+      let secondDistance = 1;
+
+      //remove ripples
+      for (let index = 0; index < 5; index++) {
+        setTimeout(() => {
+          this.buttons[col + secondDistance][row].colorValue = 0;
+          secondDistance++;
+        }, speed*index*5);
+      }
+     
+
+
+    },
+    
   },
 };
 </script>
@@ -117,18 +176,21 @@ a {
 }
 
 .on {
-  background-color: #dbe7e7;
+  background-color: rgba(105, 105, 105,0.2);
 }
 
 td {
   border: 1px solid rgb(165, 165, 165);
+  padding: 0px;
+  margin:1px;
+
   
   border-radius: 15%;
 }
 
 .container {
   display: flex;
-  
+
   justify-content: center;
 }
 
@@ -141,6 +203,58 @@ input {
   display: none;
 }
 
-tr { display: block; float: left; }
-th, td { display: block; }
+tr {
+  display: block;
+  float: left;
+}
+th,
+td {
+  display: block;
+  z-index:3;
+}
+
+
+.ripple-enter-active {
+  animation: start-ripple 1s;
+}
+.ripple-leave-active {
+  animation: start-ripple 1s reverse;
+}
+
+.small-span {
+  display: block;
+  height: 100%;
+  width: 100%
+}
+
+
+@keyframes start-ripple {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(3);
+    background-color: rgba(255,0,255,0.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.ishit {
+  border-radius: 15%;
+  
+  
+  animation: start-ripple 0.7s;
+  overflow: hidden;
+  display: block;
+  height: 100%;
+  width: 100%;
+  z-index:1;
+}
+
+.ison {
+  background-color: salmon;
+  z-index:2;
+}
 </style>
