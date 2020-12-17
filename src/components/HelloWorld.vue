@@ -254,7 +254,7 @@ td {
 }
 
 .ison {
-  background-color: salmon;
+  /*background-color: salmon;*/
   z-index:2;
 }
 </style>
