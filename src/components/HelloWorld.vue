@@ -160,20 +160,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #95a09b;
-}
+
 
 .on {
   background-color: rgba(105, 105, 105,0.2);
@@ -190,7 +177,6 @@ td {
 
 .container {
   display: flex;
-
   justify-content: center;
 }
 
@@ -198,6 +184,14 @@ td {
   height: 20px;
   width: 20px;
 }
+
+@media only screen and (max-width: 410px) {
+  td {
+    height:15px;
+    width:15px;
+  }
+}
+
 
 input {
   display: none;
