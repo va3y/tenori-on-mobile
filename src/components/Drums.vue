@@ -11,8 +11,24 @@
             @mouseup="changeButton(columnIndex, rowIndex)"
             :class="[
               { on: drumButtons[columnIndex][rowIndex].on },
-              //{ playingNow: drumButtons[columnIndex][rowIndex].isHit },
-            ]">
+              { playingNow: drumButtons[columnIndex][rowIndex].isHit },
+              {iconone: (columnIndex==0 && rowIndex==0)},
+              {icontwo: (columnIndex==0 && rowIndex==1)},
+              {iconthree: (columnIndex==0 && rowIndex==2)},
+              {iconfour: (columnIndex==0 && rowIndex==3)},
+              ]">
+
+              <!--
+              <img src="../assets/icons/icon3.svg" 
+              v-if="(columnIndex==0 && rowIndex==0)" class="icon">
+              <img src="../assets/icons/icon2.svg" width=15px
+              v-if="(columnIndex==0 && rowIndex==1)">
+              <img src="../assets/icons/icon4.svg" width=15px
+              v-if="(columnIndex==0 && rowIndex==2)">
+              <img src="../assets/icons/bass-drum.svg" width=15px
+              v-if="(columnIndex==0 && rowIndex==3)">
+              -->
+
             </span>
             </td>
         </tr>
@@ -45,6 +61,8 @@ export default {
           this.drumButtons[i].push({
             on: false,
             isHit: false,
+            img: '',
+            iconSrc: `../assets/icons/icon${j+1}.svg`
           });
         }
       }
@@ -81,5 +99,40 @@ export default {
 
 
 <style scoped>
+img {
+  user-select: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+}
+
+.iconone {
+  background-image: url("../assets/icons/icon3.svg");
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center; 
+}
+
+.icontwo {
+  background-image: url("../assets/icons/icon2.svg");
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center; 
+}
+
+.iconthree {
+  background-image: url("../assets/icons/icon4.svg");
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center; 
+}
+
+.iconfour {
+  background-image: url("../assets/icons/bass-drum.svg");
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: center; 
+}
 
 </style>

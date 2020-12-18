@@ -9,14 +9,14 @@
     />
     </div>
     
-    <TempoInput @changeTempo="setSpeed($event)" class='bpm'/>
+    
     </div>
   
 </template>
 
 <script>
 import TenoriOn from './components/TenoriOn.vue'
-import TempoInput from './components/TempoInput.vue'
+
 
 
 export default {
@@ -30,14 +30,9 @@ export default {
   },
   components: {
     TenoriOn,
-    TempoInput,
   },
-  methods: {
-    setSpeed(v) {
-      this.propsToPass.tempo = 60000/v/2;
-      
-    },
-  }
+
+  
 }
 </script>
 
@@ -55,16 +50,12 @@ export default {
   background-color: rgb(240, 237, 233);
 }
 
-.bpm {
-  margin-top: 1em;
-}
-
 .container {
   display: flex;
-  justify-content: center;
+
   flex-direction: column;
-  align-content: center;
-  align-items: center;
+  
+
 }
 
 

@@ -10,11 +10,12 @@
           <span
             class="small-span"
             @mouseover="changeButton(columnIndex, rowIndex)"
-            @mouseup="changeButton(columnIndex, rowIndex)"
+            @click="changeButtonClick(columnIndex, rowIndex)"
             :class="[
               { on: buttons[columnIndex][rowIndex].on },
               { playingNow: buttons[columnIndex][rowIndex].isHit },
-            ]">
+            ]"
+          >
             <span
               v-show="buttons[columnIndex][rowIndex].startAnimation1"
               class="ishit"
@@ -23,28 +24,36 @@
               v-show="buttons[columnIndex][rowIndex].startAnimation2"
               class="ishit"
             ></span>
-
-            
           </span>
         </td>
       </tr>
     </table>
-    <Drums @changeDrums="changeDrums($event)" 
-    class="drum-container" />
+    <span @click="showDrums=true"
+    v-if="!showDrums">more</span>
+    <span @click="showDrums=false"
+    v-if="showDrums">less</span>
+    <transition name="slide-fade">
+    <div v-if="showDrums"> 
+    <Drums @changeDrums="changeDrums($event)" class="drum-container" />
+    <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
+    </div>
+    </transition>
   </div>
 </template>
 
 
 <script>
 import SoundMaker from "../helper";
-import Drums from './Drums.vue'
+import Drums from "./Drums.vue";
+import TempoInput from "./TempoInput.vue";
 
 export default {
   name: "TenoriOn",
   components: {
     Drums,
+    TempoInput,
   },
-  props: ['tempo'],
+  props: ["tempo"],
   data() {
     return {
       buttons: [], //2-dimensional array
@@ -54,15 +63,14 @@ export default {
       currStep: 0,
       showAnimation: false,
       intervalMain: 0,
-      
+      showDrums: false
     };
   },
   created() {
     this.drawTable();
   },
   mounted() {
-    this.startPlaying(60000/128/2);
-    
+    this.startPlaying(60000 / 128 / 2); //128 bpm
   },
   methods: {
     drawTable() {
@@ -85,6 +93,9 @@ export default {
         return;
       }
     },
+    changeButtonClick(col, row) {
+      this.buttons[col][row].on = !this.buttons[col][row].on; //switch boolean
+    },
     isMouseDown(isIt) {
       this.mouseDown = isIt;
     },
@@ -96,13 +107,10 @@ export default {
       for (let i = 0; i < 4; i++) {
         this.gotDrums[col][i].isHit = false;
       }
-      
-
     },
 
     startPlaying(speed) {
       const soundMaker = new SoundMaker();
-
 
       this.intervalMain = setInterval(
         function () {
@@ -119,20 +127,16 @@ export default {
           } else {
             this.currStep++;
           }
-
         }.bind(this),
         speed //speed
       );
     },
-
-
 
     step(row, soundMaker) {
       //soundMaker.map((sound)=> {sound.currentTime = 0});
 
       for (let button = 0; button < 16; button++) {
         if (this.buttons[row][button].on) {
-          
           this.retriggerAnimation(row, button);
           this.buttons[row][button].isHit = true;
           soundMaker.playSound(button);
@@ -146,10 +150,7 @@ export default {
       }
     },
 
-   
-
     retriggerAnimation(row, button) {
-
       if (this.buttons[row][button].startAnimation1) {
         this.buttons[row][button].startAnimation1 = false;
         this.buttons[row][button].startAnimation2 = true;
@@ -161,33 +162,23 @@ export default {
 
     changeDrums(drumArray) {
       this.gotDrums = drumArray;
-      
-    }
-  },
-  watch: {
-    tempo: function (newValue) {
+    },
+    setSpeed(v) {
       clearInterval(this.intervalMain);
-      this.startPlaying(newValue);
-      
-    }
-  }
-
-
+      this.startPlaying(60000 / v / 2);
+    },
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style >
-
 td {
   border: 1px solid rgb(165, 165, 165);
   padding: 0px;
   margin: 1px;
   border-radius: 15%;
   z-index: 2;
-  background-color: white;
-
-
 }
 
 .container {
@@ -195,8 +186,9 @@ td {
   justify-content: center;
   -webkit-user-select: none;
   user-select: none;
+  
+  align-items: center;
 }
-
 
 @media only screen and (max-width: 410px) {
   td {
@@ -205,14 +197,12 @@ td {
   }
 }
 
-
 @media only screen and (min-width: 411px) {
   td {
     height: 20px;
     width: 20px;
   }
 }
-
 
 @media only screen and (min-width: 1000px) {
   td {
@@ -233,11 +223,9 @@ td {
 }
 
 .on {
-  
   animation: on-appear 0.2s;
   background-color: rgba(216, 216, 216, 1);
   z-index: 2;
-
 }
 input {
   display: none;
@@ -254,14 +242,15 @@ td {
 }
 
 .small-span {
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-content: center;
   height: 100%;
   width: 100%;
   z-index: 2;
-  
 }
 
-.span-container{
+.span-container {
   display: flex;
   justify-content: center;
   align-content: center;
@@ -273,20 +262,18 @@ td {
     opacity: 1;
   }
   50% {
-  transform: scale(4);
-  transition: transform 700ms, opacity 700ms;
-  opacity: 0.2;
+    transform: scale(4);
+    transition: transform 700ms, opacity 700ms;
+    opacity: 0.2;
   }
   100% {
     transform: scale(1);
-  opacity: 0.2;
-  display: none;
-    
+    opacity: 0.2;
+    display: none;
   }
 }
 
 .ishit {
-  
   border: rgb(216, 216, 216) 1px solid;
   opacity: 0;
   border-radius: 40%;
@@ -297,9 +284,7 @@ td {
   height: 20px;
   margin: 0 auto;
   z-index: 0;
-
 }
-
 
 .playingNow {
   /*background-color: salmon;*/
@@ -309,5 +294,11 @@ td {
 
 .drum-container {
   margin-top: 2em;
+}
+
+.bpm {
+  margin-right:24em;
+  font-size: 12px;
+  
 }
 </style>
