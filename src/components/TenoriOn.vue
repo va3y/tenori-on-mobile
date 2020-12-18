@@ -33,7 +33,7 @@
     <span @click="showDrums=false"
     v-if="showDrums">less</span>
     <transition name="slide-fade">
-    <div v-if="showDrums" class="drum-cont"> 
+    <div v-show="showDrums" class="drum-cont"> 
     <Drums @changeDrums="changeDrums($event)" class="drum-container" />
     <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
     </div>
