@@ -33,7 +33,7 @@
     <span @click="showDrums=false"
     v-if="showDrums">less</span>
     <transition name="slide-fade">
-    <div v-if="showDrums"> 
+    <div v-if="showDrums" class="drum-cont"> 
     <Drums @changeDrums="changeDrums($event)" class="drum-container" />
     <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
     </div>
@@ -186,14 +186,15 @@ td {
   justify-content: center;
   -webkit-user-select: none;
   user-select: none;
-  
+  align-content: center;
+  align-self: center;
   align-items: center;
 }
 
 @media only screen and (max-width: 410px) {
   td {
-    height: 15px;
-    width: 15px;
+    height: 17px;
+    width: 17px;
   }
 }
 
@@ -301,4 +302,5 @@ td {
   font-size: 12px;
   
 }
+
 </style>

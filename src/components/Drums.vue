@@ -1,7 +1,8 @@
 <template>
 <div
     @mousedown="isMouseDown(true)"
-    @mouseup="isMouseDown(false)"> 
+    @mouseup="isMouseDown(false)"
+    class="drum-cont">
     <table>
         <tr v-for="(column, columnIndex) in drumButtons" :key="columnIndex">
             <td v-for="(button, rowIndex) in column" :key="rowIndex">
@@ -135,4 +136,9 @@ img {
   background-position: center; 
 }
 
+
+.drum-cont {
+  display: flex;
+  justify-content: center;
+}
 </style>
