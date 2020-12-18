@@ -27,12 +27,22 @@ class SoundMaker {
         //audio.play();
     }
 
+    playDrum(which) {
+        const drum = this.loadDrum(which);
+        drum.play();
+    }
+
     loadSound(num) {
         const sound = new Audio(require(`./assets/s${num + 1}.mp3`));
         sound.type = "audio/mp3"; 
         return sound
     }
 
+    loadDrum(num) {
+        const drum = new Audio(require(`./assets/d${num + 1}.mp3`));
+        drum.type = "audio/mp3"; 
+        return drum
+    }
 
 
 }
