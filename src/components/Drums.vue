@@ -19,17 +19,6 @@
               {iconfour: (columnIndex==0 && rowIndex==3)},
               ]">
 
-              <!--
-              <img src="../assets/icons/icon3.svg" 
-              v-if="(columnIndex==0 && rowIndex==0)" class="icon">
-              <img src="../assets/icons/icon2.svg" width=15px
-              v-if="(columnIndex==0 && rowIndex==1)">
-              <img src="../assets/icons/icon4.svg" width=15px
-              v-if="(columnIndex==0 && rowIndex==2)">
-              <img src="../assets/icons/bass-drum.svg" width=15px
-              v-if="(columnIndex==0 && rowIndex==3)">
-              -->
-
             </span>
             </td>
         </tr>

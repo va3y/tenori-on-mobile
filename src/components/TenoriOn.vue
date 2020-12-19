@@ -28,16 +28,16 @@
         </td>
       </tr>
     </table>
-    <span @click="showDrums=true"
-    v-if="!showDrums">more</span>
-    <span @click="showDrums=false"
-    v-if="showDrums">less</span>
+    <span @click="showDrums = !showDrums">{{
+      showDrums ? "less" : "more"
+    }}</span>
     <transition name="slide-fade">
-    <div v-show="showDrums" class="drum-cont"> 
-    <Drums @changeDrums="changeDrums($event)" class="drum-container" />
-    <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
-    </div>
+      <div v-show="showDrums" class="drum-cont">
+        <Drums @changeDrums="changeDrums($event)" class="drum-container" />
+        <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
+      </div>
     </transition>
+    <Save v-bind:drums="this.gotDrums" v-bind:buttons="this.buttons" />
   </div>
 </template>
 
@@ -46,12 +46,15 @@
 import SoundMaker from "../helper";
 import Drums from "./Drums.vue";
 import TempoInput from "./TempoInput.vue";
+import Save from "./Save.vue";
+import Encoder from "../encoder.js";
 
 export default {
   name: "TenoriOn",
   components: {
     Drums,
     TempoInput,
+    Save,
   },
   props: ["tempo"],
   data() {
@@ -63,11 +66,38 @@ export default {
       currStep: 0,
       showAnimation: false,
       intervalMain: 0,
-      showDrums: false
+      showDrums: false,
     };
   },
   created() {
-    this.drawTable();
+    if (this.$route.query.preset) {
+      try {
+        console.log("trying to init preset");
+        const presetData = Encoder.decode(this.$route.query.preset);
+        console.log("presetdata is ", presetData);
+        let counter = 0;
+        for (let i = 0; i < 16; i++) {
+          this.buttons.push([]);
+          
+          for (let j = 0; j < 16; j++) {
+            let currData = presetData.charAt(counter) == "1" ? true : false;
+
+            this.buttons[i].push({
+              on: currData,
+              isHit: false,
+              startAnimation1: false,
+              startAnimation2: false,
+            });
+            counter++;
+          }
+        }
+        console.log("preset done!");
+      } catch (err) {
+        console.log("error when initing a preset!");
+      }
+    } else {
+      this.drawTable();
+    }
   },
   mounted() {
     this.startPlaying(60000 / 128 / 2); //128 bpm
@@ -168,6 +198,16 @@ export default {
       this.startPlaying(60000 / v / 2);
     },
   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      // access to component's instance using `vm` .
+      // this is done because this navigation guard is called before the component is created.
+      // clear your previously populated search results.
+      // re-populate search results
+      vm.drawTable();
+      next();
+    });
+  },
 };
 </script>
 
@@ -189,6 +229,8 @@ td {
   align-content: center;
   align-self: center;
   align-items: center;
+  margin-top: 1em;
+  margin-bottom: 2em;
 }
 
 @media only screen and (max-width: 410px) {
@@ -298,9 +340,25 @@ td {
 }
 
 .bpm {
-  margin-right:24em;
+  margin-right: 24em;
   font-size: 12px;
-  
 }
 
+@keyframes drumfade {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.slide-fade-enter-active {
+  animation: drumfade 0.5s cubic-bezier(1, 0.8, 0.9, 1);
+}
+
+.slide-fade-leave-active {
+  animation: drumfade 0.5s reverse cubic-bezier(1, 0.8, 0.9, 1);
+}
 </style>

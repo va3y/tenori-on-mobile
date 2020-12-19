@@ -16,6 +16,7 @@
       @mouseout="clearIntervals"
       
     />
+
   </div>
 </template>
 

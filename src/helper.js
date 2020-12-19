@@ -1,4 +1,4 @@
-class SoundMaker { 
+export default class SoundMaker { 
     constructor() {
         this.message = 'hello world';
         this.soundsArray = this._loadSounds();
@@ -10,8 +10,6 @@ class SoundMaker {
             const sound = new Audio(require(`./assets/s${index+1}.mp3`));
             sound.type = "audio/mp3"; 
             soundsArray.push(sound)
-
-        
             
         }
 
@@ -45,13 +43,7 @@ class SoundMaker {
     }
 
 
+
 }
 
 
-
-
-
-
-
-
-export default SoundMaker;
