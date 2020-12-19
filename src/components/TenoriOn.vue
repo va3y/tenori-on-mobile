@@ -214,11 +214,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style >
 td {
-  border: 1px solid rgb(165, 165, 165);
-  padding: 0px;
-  margin: 1px;
-  border-radius: 15%;
-  z-index: 2;
+
+
 }
 
 .container {
@@ -269,6 +266,7 @@ td {
   animation: on-appear 0.2s;
   background-color: rgba(216, 216, 216, 1);
   z-index: 2;
+  border-radius: 5px;
 }
 input {
   display: none;
@@ -288,8 +286,14 @@ td {
   display: flex;
   justify-content: center;
   align-content: center;
-  height: 100%;
-  width: 100%;
+  height: 90%;
+  width: 90%;
+  z-index: 0;
+  border: 1px solid rgb(165, 165, 165);
+  border-radius: 4px;
+  padding: 0px;
+  margin: 1px;
+
   z-index: 2;
 }
 

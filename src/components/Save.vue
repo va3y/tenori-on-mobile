@@ -1,9 +1,11 @@
 <template>
 
     <div> 
-    <button @click="savePreset">save!</button>
+    <button @click="savePreset">Save this pattern</button>
     <br>
-    <a :href="this.getCurrURL() + this.output">Link!</a>
+    <a :href="this.getCurrURL() + '?preset=' + this.output"
+    v-if="this.output"
+    >Here's the link to share 🎉</a>
 
     
     </div>
@@ -43,5 +45,15 @@ export default {
 <style scoped>
 *{
     user-select: text;
+}
+
+button {
+    border-style: none;
+    padding: 4px;
+    
+    border-radius: 20px;
+    background: rgb(179, 179, 179);
+    overflow: auto;
+    box-shadow: 0 0 3pt 2pt rgb(139, 139, 139);
 }
 </style>
