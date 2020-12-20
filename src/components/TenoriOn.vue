@@ -1,16 +1,18 @@
 <template>
-  <div
-    @mousedown="isMouseDown(true)"
-    @mouseup="isMouseDown(false)"
-    class="container"
-  >
+  <div @mouseup="isMouseDown(false, false)" class="container">
     <table>
       <tr v-for="(column, columnIndex) in buttons" :key="columnIndex">
-        <td v-for="(button, rowIndex) in column" :key="rowIndex">
+        <td
+          v-for="(button, rowIndex) in column"
+          :key="rowIndex"
+          @mousedown="
+            isMouseDown(true, !buttons[columnIndex][rowIndex].on);
+            changeButtonClick(columnIndex, rowIndex);
+          "
+          @mouseover="changeButton(columnIndex, rowIndex)"
+        >
           <span
             class="small-span"
-            @mouseover="changeButton(columnIndex, rowIndex)"
-            @click="changeButtonClick(columnIndex, rowIndex)"
             :class="[
               { on: buttons[columnIndex][rowIndex].on },
               { playingNow: buttons[columnIndex][rowIndex].isHit },
@@ -28,16 +30,26 @@
         </td>
       </tr>
     </table>
-    <span @click="showDrums = !showDrums">{{
+    <span @click="showDrums = !showDrums"
+    class="more-button">{{
       showDrums ? "less" : "more"
     }}</span>
     <transition name="slide-fade">
       <div v-show="showDrums" class="drum-cont">
         <Drums @changeDrums="changeDrums($event)" class="drum-container" />
-        <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
+        
+      <div class="tempo-and-share"> 
+
+      <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
+         <Save 
+    v-bind:drums="this.gotDrums" 
+    v-bind:buttons="this.buttons"
+    v-bind:tempo="this.currentTempo" 
+    class="save-btn"/>
+      </div>
       </div>
     </transition>
-    <Save v-bind:drums="this.gotDrums" v-bind:buttons="this.buttons" />
+   
   </div>
 </template>
 
@@ -62,11 +74,15 @@ export default {
       buttons: [], //2-dimensional array
       gotDrums: [],
       btnStyle: "btnStyle",
-      mouseDown: false,
+      mouseDown: {
+        isIt: false,
+        upOrDown: false,
+      },
       currStep: 0,
       showAnimation: false,
-      intervalMain: 0,
+      intervalsMain: [],
       showDrums: false,
+      currentTempo: 128
     };
   },
   created() {
@@ -74,14 +90,11 @@ export default {
       try {
         console.log("trying to init preset");
         const presetData = Encoder.decode(this.$route.query.preset);
-        console.log("presetdata is ", presetData);
         let counter = 0;
         for (let i = 0; i < 16; i++) {
           this.buttons.push([]);
-          
           for (let j = 0; j < 16; j++) {
             let currData = presetData.charAt(counter) == "1" ? true : false;
-
             this.buttons[i].push({
               on: currData,
               isHit: false,
@@ -100,7 +113,17 @@ export default {
     }
   },
   mounted() {
+    if (this.$route.query.tempo) {
+      try {
+        this.startPlaying(60000 / this.$route.query.tempo / 2); 
+      } catch (error) {
+        console.log('error when setting preset tempo!')
+        this.startPlaying(60000 / 128 / 2); //128 bpm
+        
+      }
+    } else {
     this.startPlaying(60000 / 128 / 2); //128 bpm
+    }
   },
   methods: {
     drawTable() {
@@ -117,8 +140,8 @@ export default {
       }
     },
     changeButton(col, row) {
-      if (this.mouseDown) {
-        this.buttons[col][row].on = !this.buttons[col][row].on; //switch boolean
+      if (this.mouseDown.isIt) {
+        this.buttons[col][row].on = this.mouseDown.upOrDown; //switch boolean
       } else {
         return;
       }
@@ -126,8 +149,9 @@ export default {
     changeButtonClick(col, row) {
       this.buttons[col][row].on = !this.buttons[col][row].on; //switch boolean
     },
-    isMouseDown(isIt) {
-      this.mouseDown = isIt;
+    isMouseDown(isIt, upOrDown) {
+      this.mouseDown.isIt = isIt;
+      this.mouseDown.upOrDown = upOrDown;
     },
 
     clearHits(col) {
@@ -139,10 +163,15 @@ export default {
       }
     },
 
-    startPlaying(speed) {
+    startPlaying() {
       const soundMaker = new SoundMaker();
+      
+      for (let i = 0; i < this.intervalsMain.length; i++) {
+        clearInterval(this.intervalsMain[i]);
+        this.intervalsMain.pop(i)
+      }
 
-      this.intervalMain = setInterval(
+      this.intervalsMain.push (setInterval(
         function () {
           this.step(this.currStep, soundMaker);
 
@@ -158,8 +187,9 @@ export default {
             this.currStep++;
           }
         }.bind(this),
-        speed //speed
-      );
+        (60000 / Math.floor(this.currentTempo) / 2)//speed
+      ));
+      console.log('started playing at ', Math.floor(this.currentTempo))
     },
 
     step(row, soundMaker) {
@@ -194,30 +224,19 @@ export default {
       this.gotDrums = drumArray;
     },
     setSpeed(v) {
-      clearInterval(this.intervalMain);
-      this.startPlaying(60000 / v / 2);
+      
+      this.currentTempo = v;
+      console.log('v is ', v)
+      this.startPlaying();
+      
     },
   },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      // access to component's instance using `vm` .
-      // this is done because this navigation guard is called before the component is created.
-      // clear your previously populated search results.
-      // re-populate search results
-      vm.drawTable();
-      next();
-    });
-  },
+
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style >
-td {
-
-
-}
-
 .container {
   display: flex;
   justify-content: center;
@@ -339,14 +358,6 @@ td {
   z-index: 2;
 }
 
-.drum-container {
-  margin-top: 2em;
-}
-
-.bpm {
-  margin-right: 24em;
-  font-size: 12px;
-}
 
 @keyframes drumfade {
   from {
@@ -364,5 +375,27 @@ td {
 
 .slide-fade-leave-active {
   animation: drumfade 0.5s reverse cubic-bezier(1, 0.8, 0.9, 1);
+}
+
+.more-button{
+  margin-top:2em;
+}
+
+
+.drum-container {
+  margin-top: 1em;
+  display: flex;
+  justify-content: center;
+
+}
+
+.tempo-and-share {
+  display: flex;
+  justify-content: space-between;
+  height:23px;
+}
+
+.bpm {
+  margin-top:5px;
 }
 </style>

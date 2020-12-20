@@ -46,6 +46,7 @@ export default {
 .nav-link {
   font-size: 100%;
   font-family: monospace;
+  
   color: rgb(212, 161, 151);
 }
 

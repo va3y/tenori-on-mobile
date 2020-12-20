@@ -6,8 +6,7 @@ export default class Encoder {
     let strArr = "";
     for (let i = 0; i < allArray.length; i++) {
       for (let j = 0; j < allArray[i].length; j++) {
-        let bin = allArray[i][j].on ? 1 : 0;
-        strArr += bin.toString();
+        strArr += allArray[i][j].on ? '1' : '0';
       }
     }
     console.log("initial is", strArr);
@@ -22,7 +21,7 @@ export default class Encoder {
     const lastChunkLen = strArr.length % 6;
       let lastSlice = strArr.slice(strArr.length - lastChunkLen, strArr.length);
       let number = parseInt(lastSlice, 2);
-      console.log("last number!! is ", number);
+      console.log("last number!! It is ", number);
       chunks += this.charSet[number];
 
     return encodeURI(chunks);

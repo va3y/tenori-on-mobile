@@ -1,26 +1,25 @@
 <template>
   <div class="tempo-container">
-    <img
-      src="../assets/circle-left.svg"
+    <span
       @mousedown="downTempo"
       @click="downInc"
       @mouseup="clearIntervals"
       @mouseout="clearIntervals"
-    />
+    > &lt;&lt;</span>
     <span class="tempo-display">{{ tempo }} bpm </span>
-    <img
-      src="../assets/circle-right.svg"
+    <span
       @mousedown="upTempo"
       @click="upInc"
       @mouseup="clearIntervals"
       @mouseout="clearIntervals"
       
-    />
+    >&gt;&gt;</span>
 
   </div>
 </template>
 
 <script>
+
 export default {
   name: "TempoInput",
 
@@ -30,6 +29,18 @@ export default {
       upInterval: 0,
       tempo: 128,
     };
+  },
+  created() {
+    if (this.$route.query.tempo) {
+    try {
+      const getTempo = parseInt(this.$route.query.tempo)
+      this.tempo = (getTempo);
+      this.$emit ("changeTempo", this.tempo);
+    } catch (error) {
+      console.log('err when setting the tempo!')
+    }
+
+    }
   },
   methods: {
     downInc() {
@@ -42,18 +53,19 @@ export default {
     downTempo() {
       this.downInterval = setInterval(() => {
         this.tempo--;
-        this.$emit("changeTempo", this.tempo);
+        
       }, 100);
     },
     upTempo() {
       this.upInterval = setInterval(() => {
         this.tempo++;
-        this.$emit("changeTempo", this.tempo);
+        
       }, 100);
     },
     clearIntervals() {
       clearInterval(this.downInterval);
       clearInterval(this.upInterval);
+      this.$emit("changeTempo", this.tempo);
     },
   },
 };
@@ -63,7 +75,13 @@ export default {
 
 .tempo-display {
 
-  margin-top: 2px;
+  margin-left:5px;
+  margin-right:5px;
+  font-family: monospace;
+  font-size: 14px;
+
+  align-self: center;
+  padding-bottom: 1px;;
 }
 
 
@@ -72,13 +90,15 @@ export default {
 
 
     display: flex;
-    align-items: center;
-    align-self: center;
+    align-self:flex-end;
+    text-align: left;
+    padding-left:5px;
+    margin-top:3px;
+    
 }
 
 img{
     width:17px;
-    padding:5px;
     user-select: none;
 }
 </style>

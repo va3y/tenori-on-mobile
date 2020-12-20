@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <h1>Tenori-on</h1>
+           <keep-alive>
     <router-view />
+    </keep-alive>
   </div>
 </template>
 
