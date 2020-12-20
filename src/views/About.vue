@@ -29,7 +29,7 @@
       <span class="credentials">
       Made with ♥ by @valerih12
       <br />
-      <a href="https://github.com/valerih21"> My Github page</a>
+      <a href="https://github.com/valerih12"> My Github page</a>
     </span>
 
       </div>
