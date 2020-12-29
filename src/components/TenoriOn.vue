@@ -30,26 +30,24 @@
         </td>
       </tr>
     </table>
-    <span @click="showDrums = !showDrums"
-    class="more-button">{{
+    <span @click="showDrums = !showDrums" class="more-button">{{
       showDrums ? "less" : "more"
     }}</span>
     <transition name="slide-fade">
       <div v-show="showDrums" class="drum-cont">
         <Drums @changeDrums="changeDrums($event)" class="drum-container" />
-        
-      <div class="tempo-and-share"> 
 
-      <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
-         <Save 
-    v-bind:drums="this.gotDrums" 
-    v-bind:buttons="this.buttons"
-    v-bind:tempo="this.currentTempo" 
-    class="save-btn"/>
-      </div>
+        <div class="tempo-and-share">
+          <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
+          <Save
+            v-bind:drums="this.gotDrums"
+            v-bind:buttons="this.buttons"
+            v-bind:tempo="this.currentTempo"
+            class="save-btn"
+          />
+        </div>
       </div>
     </transition>
-   
   </div>
 </template>
 
@@ -72,17 +70,16 @@ export default {
   data() {
     return {
       buttons: [], //2-dimensional array
+      onButtins: [], //buttons that are ON!
       gotDrums: [],
-      btnStyle: "btnStyle",
       mouseDown: {
         isIt: false,
         upOrDown: false,
       },
       currStep: 0,
-      showAnimation: false,
       intervalsMain: [],
       showDrums: false,
-      currentTempo: 128
+      currentTempo: 128,
     };
   },
   created() {
@@ -90,52 +87,46 @@ export default {
       try {
         console.log("trying to init preset");
         const presetData = Encoder.decode(this.$route.query.preset);
-        let counter = 0;
-        for (let i = 0; i < 16; i++) {
-          this.buttons.push([]);
-          for (let j = 0; j < 16; j++) {
-            let currData = presetData.charAt(counter) == "1" ? true : false;
-            this.buttons[i].push({
-              on: currData,
-              isHit: false,
-              startAnimation1: false,
-              startAnimation2: false,
-            });
-            counter++;
-          }
-        }
+        this.drawTable(presetData);
         console.log("preset done!");
       } catch (err) {
         console.log("error when initing a preset!");
       }
     } else {
-      this.drawTable();
+      this.drawTable(null);
     }
   },
   mounted() {
     if (this.$route.query.tempo) {
       try {
-        this.startPlaying(60000 / this.$route.query.tempo / 2); 
+        this.startPlaying(60000 / this.$route.query.tempo / 2);
       } catch (error) {
-        console.log('error when setting preset tempo!')
+        console.log("error when setting preset tempo!");
         this.startPlaying(60000 / 128 / 2); //128 bpm
-        
       }
     } else {
-    this.startPlaying(60000 / 128 / 2); //128 bpm
+      this.startPlaying(60000 / 128 / 2); //128 bpm
     }
   },
   methods: {
-    drawTable() {
+    drawTable(preset) {
+      let counter = 0;
       for (let i = 0; i < 16; i++) {
         this.buttons.push([]);
         for (let j = 0; j < 16; j++) {
+          let isOn = false;
+          try {
+            isOn = preset.charAt(counter) == "1" ? true : false;
+          } catch (err) {
+            console.log(err.message, 'and thats ok!');
+          }
           this.buttons[i].push({
-            on: false,
+            on: isOn,
             isHit: false,
             startAnimation1: false,
             startAnimation2: false,
           });
+          counter++;
         }
       }
     },
@@ -165,36 +156,36 @@ export default {
 
     startPlaying() {
       const soundMaker = new SoundMaker();
-      
+
       for (let i = 0; i < this.intervalsMain.length; i++) {
         clearInterval(this.intervalsMain[i]);
-        this.intervalsMain.pop(i)
+        this.intervalsMain.pop(i);
       }
 
-      this.intervalsMain.push (setInterval(
-        function () {
-          this.step(this.currStep, soundMaker);
+      this.intervalsMain.push(
+        setInterval(
+          function () {
+            this.step(this.currStep, soundMaker);
 
-          if (this.currStep == 0) {
-            this.clearHits(15);
-          } else {
-            this.clearHits(this.currStep - 1);
-          }
+            if (this.currStep == 0) {
+              this.clearHits(15);
+            } else {
+              this.clearHits(this.currStep - 1);
+            }
 
-          if (this.currStep == 15) {
-            this.currStep = 0;
-          } else {
-            this.currStep++;
-          }
-        }.bind(this),
-        (60000 / Math.floor(this.currentTempo) / 2)//speed
-      ));
-      console.log('started playing at ', Math.floor(this.currentTempo))
+            if (this.currStep == 15) {
+              this.currStep = 0;
+            } else {
+              this.currStep++;
+            }
+          }.bind(this),
+          60000 / Math.floor(this.currentTempo) / 2 //speed
+        )
+      );
+      console.log("started playing at ", Math.floor(this.currentTempo));
     },
 
     step(row, soundMaker) {
-      //soundMaker.map((sound)=> {sound.currentTime = 0});
-
       for (let button = 0; button < 16; button++) {
         if (this.buttons[row][button].on) {
           this.retriggerAnimation(row, button);
@@ -224,14 +215,11 @@ export default {
       this.gotDrums = drumArray;
     },
     setSpeed(v) {
-      
       this.currentTempo = v;
-      console.log('v is ', v)
+      console.log("v is ", v);
       this.startPlaying();
-      
     },
   },
-
 };
 </script>
 
@@ -358,7 +346,6 @@ td {
   z-index: 2;
 }
 
-
 @keyframes drumfade {
   from {
     opacity: 0;
@@ -377,25 +364,23 @@ td {
   animation: drumfade 0.5s reverse cubic-bezier(1, 0.8, 0.9, 1);
 }
 
-.more-button{
-  margin-top:2em;
+.more-button {
+  margin-top: 2em;
 }
-
 
 .drum-container {
   margin-top: 1em;
   display: flex;
   justify-content: center;
-
 }
 
 .tempo-and-share {
   display: flex;
   justify-content: space-between;
-  height:23px;
+  height: 23px;
 }
 
 .bpm {
-  margin-top:5px;
+  margin-top: 5px;
 }
 </style>

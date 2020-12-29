@@ -8,12 +8,15 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@capacitor/android": "^2.4.5",
+    "@capacitor/core": "2.4.5",
     "core-js": "^3.6.5",
     "js-string-compression": "^1.0.1",
     "vue": "^2.6.11",
     "vue-router": "^3.4.9"
   },
   "devDependencies": {
+    "@capacitor/cli": "2.4.5",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",

@@ -1,0 +1,7 @@
+{
+  "name": "tenori-on",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
