@@ -70,7 +70,7 @@ export default {
   data() {
     return {
       buttons: [], //2-dimensional array
-      onButtins: [], //buttons that are ON!
+      onButtons: [], //buttons that are ON!
       gotDrums: [],
       mouseDown: {
         isIt: false,
@@ -90,21 +90,18 @@ export default {
         this.drawTable(presetData);
         console.log("preset done!");
       } catch (err) {
-        console.log("error when initing a preset!");
+        console.log("error when initing a preset..");
       }
     } else {
       this.drawTable(null);
     }
+    this.onButtons = this.createOnButtonsArray();
   },
   mounted() {
-    if (this.$route.query.tempo) {
-      try {
-        this.startPlaying(60000 / this.$route.query.tempo / 2);
-      } catch (error) {
-        console.log("error when setting preset tempo!");
-        this.startPlaying(60000 / 128 / 2); //128 bpm
-      }
-    } else {
+    try {
+      this.startPlaying(60000 / this.$route.query.tempo / 2);
+    } catch (error) {
+      console.log("error when setting preset tempo!");
       this.startPlaying(60000 / 128 / 2); //128 bpm
     }
   },
@@ -118,7 +115,7 @@ export default {
           try {
             isOn = preset.charAt(counter) == "1" ? true : false;
           } catch (err) {
-            console.log(err.message, 'and thats ok!');
+            console.log(err.message, "and thats ok!");
           }
           this.buttons[i].push({
             on: isOn,
@@ -132,19 +129,24 @@ export default {
     },
     changeButton(col, row) {
       if (this.mouseDown.isIt) {
-        this.buttons[col][row].on = this.mouseDown.upOrDown; //switch boolean
+        this.changeButtonClick(col, row); //switch boolean
       } else {
         return;
       }
     },
     changeButtonClick(col, row) {
+      let isItOn = this.onButtons[col].indexOf(row);
+      if (isItOn === true) {
+        this.onButtons[col].pop(isItOn);
+      } else {
+        this.onButtons[col].push(row);
+      }
       this.buttons[col][row].on = !this.buttons[col][row].on; //switch boolean
     },
     isMouseDown(isIt, upOrDown) {
       this.mouseDown.isIt = isIt;
       this.mouseDown.upOrDown = upOrDown;
     },
-
     clearHits(col) {
       for (let i = 0; i < 16; i++) {
         this.buttons[col][i].isHit = false;
@@ -186,13 +188,20 @@ export default {
     },
 
     step(row, soundMaker) {
-      for (let button = 0; button < 16; button++) {
-        if (this.buttons[row][button].on) {
-          this.retriggerAnimation(row, button);
-          this.buttons[row][button].isHit = true;
-          soundMaker.playSound(button);
+      this.onButtons[row].map(
+        b => {
+          soundMaker.playSound(b)
+          this.retriggerAnimation(row, b);
+          this.buttons[row][b].isHit = true;
         }
-      }
+      )
+      // for (let button = 0; button < 16; button++) {
+      //   if (this.buttons[row][button].on) {
+      //     this.retriggerAnimation(row, button);
+      //     this.buttons[row][button].isHit = true;
+      //     soundMaker.playSound(button);
+      //   }
+      // }
       for (let button = 0; button < 4; button++) {
         if (this.gotDrums[row][button].on) {
           soundMaker.playDrum(button);
@@ -218,6 +227,13 @@ export default {
       this.currentTempo = v;
       console.log("v is ", v);
       this.startPlaying();
+    },
+    createOnButtonsArray() {
+      const arr = new Array(16);
+      for (var i = 0; i < arr.length; i++) {
+        arr[i] = new Array(16);
+      }
+      return arr;
     },
   },
 };
