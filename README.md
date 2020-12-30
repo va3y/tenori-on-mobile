@@ -1,14 +1,18 @@
 # tenori-on-mobile
-This is a mobile adaptation of my tenori-on project. It has an Ionic framework under the hood. 
+This is a mobile adaptation of my tenori-on project. Ionic framework under the hood. 
 
-TO-DO List
+
+
+To-do List
 
 [*] Make setInterval more stable
 
-[] Make a page with present saves 
+[] Create a page with saved presets
 
-[*] Make squares max width
+[*] Set squares max width
 
-[] Make touch system work
+[*] Make touch system work
+
+[] Make a draw/click switch
 
 [] Dark theme support 

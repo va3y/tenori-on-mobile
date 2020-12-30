@@ -1,17 +1,13 @@
 <template>
-  <div @mouseup="isMouseDown(false, false)" class="container">
+  <div @touchmove="touchStart" class="container">
     <div v-for="(column, rowIndex) in buttons" :key="rowIndex" class="rows">
       <div
         class="hitbox"
-        @mousedown="
-          isMouseDown(true, !buttons[columnIndex][rowIndex].on);
-          changeButtonClick(columnIndex, rowIndex);
-        "
-        @mouseenter="changeButton(columnIndex, rowIndex)"
         v-for="(button, columnIndex) in column"
         :key="columnIndex"
       >
         <div
+          :id='(rowIndex*16)+columnIndex'
           class="button"
           :class="[{ on: buttons[columnIndex][rowIndex].on }]"
         >
@@ -138,6 +134,23 @@ export default {
     isMouseDown(isIt, upOrDown) {
       this.mouseDown.isIt = isIt;
       this.mouseDown.upOrDown = upOrDown;
+    },
+    touchStart(event) {
+      try {
+        const myLocation = event.changedTouches[0];
+        const realTarget = document.elementFromPoint(
+          myLocation.clientX,
+          myLocation.clientY
+        );
+        const col = Number(realTarget.id) % 16;
+        const row = Math.floor(Number(realTarget.id) / 16);
+        if (col != 0 || row != 0){
+          this.changeButtonClick(col,row);
+        }
+        
+      } catch (error) {
+        console.log(error);
+      }
     },
     clearHits(col) {
       for (let i = 0; i < 16; i++) {

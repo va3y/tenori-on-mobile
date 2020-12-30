@@ -26,7 +26,7 @@ export default {
 }
 
 h1 {
-  margin-top: 1.5em;
+  margin-top: 1em;
   margin-bottom:0px;
 }
 
