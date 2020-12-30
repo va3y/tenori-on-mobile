@@ -1,5 +1,0 @@
-[] Make setInterval more stable
-[] Make a page with present saves 
-[] Make squares max width
-[] Make touch system work
-[] Dark theme support 

@@ -3,7 +3,7 @@
       <router-link to="/about" 
     class="nav-link">About</router-link>
 
-    <div class="container">
+    <div>
       <TenoriOn
         msg="Welcome to Your Vue.js App"
       />
@@ -31,17 +31,6 @@ export default {
 </script>
 
 <style scoped>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-* {
-  background-color: rgb(240, 237, 233);
-}
 
 .nav-link {
   font-size: 100%;

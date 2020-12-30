@@ -3,7 +3,7 @@
     <div class="save-container"> 
     <button @click="savePreset">Save this pattern</button>
     <br>
-    <a v-if="this.drumsOutput" :href="this.getCurrURL() + '?preset=' + this.buttonsOutput +
+    <a v-if="drumsOutput" :href="getCurrURL() + '?preset=' + this.buttonsOutput +
     '&drums=' + this.drumsOutput +
     '&tempo=' + this.tempo"
     class="savelink"

@@ -1,38 +1,30 @@
 <template>
   <div @mouseup="isMouseDown(false, false)" class="container">
-    <table>
-      <tr v-for="(column, columnIndex) in buttons" :key="columnIndex">
-        <td
-          v-for="(button, rowIndex) in column"
-          :key="rowIndex"
-          @mousedown="
-            isMouseDown(true, !buttons[columnIndex][rowIndex].on);
-            changeButtonClick(columnIndex, rowIndex);
-          "
-          @mouseover="changeButton(columnIndex, rowIndex)"
+    <div v-for="(column, rowIndex) in buttons" :key="rowIndex" class="rows">
+      <div
+        class="hitbox"
+        @mousedown="
+          isMouseDown(true, !buttons[columnIndex][rowIndex].on);
+          changeButtonClick(columnIndex, rowIndex);
+        "
+        @mouseenter="changeButton(columnIndex, rowIndex)"
+        v-for="(button, columnIndex) in column"
+        :key="columnIndex"
+      >
+        <div
+          class="button"
+          :class="[{ on: buttons[columnIndex][rowIndex].on }]"
         >
           <span
-            class="small-span"
-            :class="[
-              { on: buttons[columnIndex][rowIndex].on },
-              { playingNow: buttons[columnIndex][rowIndex].isHit },
-            ]"
-          >
-            <span
-              v-show="buttons[columnIndex][rowIndex].startAnimation1"
-              class="ishit"
-            ></span>
-            <span
-              v-show="buttons[columnIndex][rowIndex].startAnimation2"
-              class="ishit"
-            ></span>
-          </span>
-        </td>
-      </tr>
-    </table>
-    <span @click="showDrums = !showDrums" class="more-button">{{
-      showDrums ? "less" : "more"
-    }}</span>
+            v-if="buttons[columnIndex][rowIndex].startAnimation"
+            class="ishit"
+          ></span>
+        </div>
+      </div>
+    </div>
+    <div @click="showDrums = !showDrums" class="more-button">
+      {{ showDrums ? "less" : "more" }}
+    </div>
     <transition name="slide-fade">
       <div v-show="showDrums" class="drum-cont">
         <Drums @changeDrums="changeDrums($event)" class="drum-container" />
@@ -136,10 +128,10 @@ export default {
     },
     changeButtonClick(col, row) {
       let isItOn = this.onButtons[col].indexOf(row);
-      if (isItOn === true) {
-        this.onButtons[col].pop(isItOn);
-      } else {
+      if (isItOn === -1) {
         this.onButtons[col].push(row);
+      } else {
+        this.onButtons[col].pop(isItOn);
       }
       this.buttons[col][row].on = !this.buttons[col][row].on; //switch boolean
     },
@@ -168,7 +160,6 @@ export default {
         setInterval(
           function () {
             this.step(this.currStep, soundMaker);
-
             if (this.currStep == 0) {
               this.clearHits(15);
             } else {
@@ -188,35 +179,19 @@ export default {
     },
 
     step(row, soundMaker) {
-      this.onButtons[row].map(
-        b => {
-          soundMaker.playSound(b)
-          this.retriggerAnimation(row, b);
-          this.buttons[row][b].isHit = true;
-        }
-      )
-      // for (let button = 0; button < 16; button++) {
-      //   if (this.buttons[row][button].on) {
-      //     this.retriggerAnimation(row, button);
-      //     this.buttons[row][button].isHit = true;
-      //     soundMaker.playSound(button);
-      //   }
-      // }
+      this.onButtons[row].map((b) => {
+        soundMaker.playSound(b);
+        this.buttons[row][b].startAnimation = true;
+        this.buttons[row][b].isHit = true;
+        setTimeout(() => {
+          this.buttons[row][b].startAnimation = false;
+        }, 500);
+      });
       for (let button = 0; button < 4; button++) {
         if (this.gotDrums[row][button].on) {
           soundMaker.playDrum(button);
           this.gotDrums[row][button].isHit = true;
         }
-      }
-    },
-
-    retriggerAnimation(row, button) {
-      if (this.buttons[row][button].startAnimation1) {
-        this.buttons[row][button].startAnimation1 = false;
-        this.buttons[row][button].startAnimation2 = true;
-      } else {
-        this.buttons[row][button].startAnimation1 = true;
-        this.buttons[row][button].startAnimation2 = false;
       }
     },
 
@@ -231,7 +206,7 @@ export default {
     createOnButtonsArray() {
       const arr = new Array(16);
       for (var i = 0; i < arr.length; i++) {
-        arr[i] = new Array(16);
+        arr[i] = [];
       }
       return arr;
     },
@@ -239,39 +214,11 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style >
+<style>
 .container {
-  display: flex;
-  justify-content: center;
-  -webkit-user-select: none;
-  user-select: none;
-  align-content: center;
-  align-self: center;
-  align-items: center;
-  margin-top: 1em;
+  margin-top: 2em;
   margin-bottom: 2em;
-}
-
-@media only screen and (max-width: 410px) {
-  td {
-    height: 17px;
-    width: 17px;
-  }
-}
-
-@media only screen and (min-width: 411px) {
-  td {
-    height: 20px;
-    width: 20px;
-  }
-}
-
-@media only screen and (min-width: 1000px) {
-  td {
-    height: 25px;
-    width: 25px;
-  }
+  user-select: none;
 }
 
 @keyframes on-appear {
@@ -287,7 +234,7 @@ export default {
 
 .on {
   animation: on-appear 0.2s;
-  background-color: rgba(216, 216, 216, 1);
+  background-color: rgb(125, 125, 125);
   z-index: 2;
   border-radius: 5px;
 }
@@ -295,35 +242,22 @@ input {
   display: none;
 }
 
-tr {
-  display: block;
-  float: left;
-}
-th,
-td {
-  display: block;
-  z-index: 3;
-}
-
-.small-span {
+.rows {
   display: flex;
   justify-content: center;
-  align-content: center;
-  height: 90%;
-  width: 90%;
-  z-index: 0;
+}
+
+.button {
   border: 1px solid rgb(165, 165, 165);
-  border-radius: 4px;
-  padding: 0px;
-  margin: 1px;
-
-  z-index: 2;
-}
-
-.span-container {
+  border-radius: 20%;
+  z-index: 3;
+  margin: 2px;
   display: flex;
   justify-content: center;
   align-content: center;
+
+  width: 4.5vw;
+  height: 4.5vw;
 }
 
 @keyframes start-ripple {
@@ -331,34 +265,23 @@ td {
     transform: scale(1);
     opacity: 1;
   }
-  50% {
-    transform: scale(4);
-    transition: transform 700ms, opacity 700ms;
-    opacity: 0.2;
-  }
   100% {
-    transform: scale(1);
-    opacity: 0.2;
-    display: none;
+    transform: scale(5);
   }
 }
 
 .ishit {
-  border: rgb(216, 216, 216) 1px solid;
+  border: rgba(90, 90, 90, 0.1) 0.5px solid;
   opacity: 0;
   border-radius: 40%;
-  animation: start-ripple 0.7s;
-  position: absolute;
-  display: block;
-  width: 20px;
-  height: 20px;
-  margin: 0 auto;
-  z-index: 0;
+  animation: start-ripple 1s;
+  height: 100%;
+  width: 100%;
 }
 
 .playingNow {
   /*background-color: salmon;*/
-  background-color: rgb(65, 65, 65);
+  background-color: rgb(62, 62, 62);
   z-index: 2;
 }
 
@@ -381,7 +304,7 @@ td {
 }
 
 .more-button {
-  margin-top: 2em;
+  margin-top: 1em;
 }
 
 .drum-container {

@@ -3,11 +3,11 @@ This is a mobile adaptation of my tenori-on project. It has an Ionic framework u
 
 TO-DO List
 
-[] Make setInterval more stable
+[*] Make setInterval more stable
 
 [] Make a page with present saves 
 
-[] Make squares max width
+[*] Make squares max width
 
 [] Make touch system work
 

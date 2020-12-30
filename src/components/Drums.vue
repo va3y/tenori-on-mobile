@@ -4,26 +4,31 @@
     @mouseup="isMouseDown(false)"
     class="drum-cont"
   >
-    <table>
-      <tr v-for="(column, columnIndex) in drumButtons" :key="columnIndex">
-        <td v-for="(button, rowIndex) in column" :key="rowIndex">
-          <span
-            class="small-span"
-            @mouseover="changeButton(columnIndex, rowIndex)"
-            @mouseup="changeButton(columnIndex, rowIndex)"
-            :class="[
-              { on: drumButtons[columnIndex][rowIndex].on },
-              { playingNow: drumButtons[columnIndex][rowIndex].isHit },
-              { iconone: columnIndex == 0 && rowIndex == 0 },
-              { icontwo: columnIndex == 0 && rowIndex == 1 },
-              { iconthree: columnIndex == 0 && rowIndex == 2 },
-              { iconfour: columnIndex == 0 && rowIndex == 3 },
-            ]"
-          >
-          </span>
-        </td>
-      </tr>
-    </table>
+    <div
+      v-for="(column, columnIndex) in drumButtons"
+      :key="columnIndex"
+      class="row"
+    >
+      <div
+        v-for="(button, rowIndex) in column"
+        :key="rowIndex"
+        class="hitbox"
+        @mouseenter="changeButton(columnIndex, rowIndex)"
+        @mouseup="changeButton(columnIndex, rowIndex)"
+      >
+        <div
+          class="button"
+          :class="[
+            { on: drumButtons[columnIndex][rowIndex].on },
+            { playingNow: drumButtons[columnIndex][rowIndex].isHit },
+            { iconone: columnIndex == 0 && rowIndex == 0 },
+            { icontwo: columnIndex == 0 && rowIndex == 1 },
+            { iconthree: columnIndex == 0 && rowIndex == 2 },
+            { iconfour: columnIndex == 0 && rowIndex == 3 },
+          ]"
+        ></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -62,12 +67,10 @@ export default {
         console.log("error when initing a drum preset!");
       }
     } else {
-    this.drawTable();
+      this.drawTable();
     }
-    
-  
-    },
-  
+  },
+
   methods: {
     drawTable() {
       for (let i = 0; i < 16; i++) {
@@ -80,7 +83,7 @@ export default {
           });
         }
       }
-      this.$emit('changeDrums', this.drumButtons)
+      this.$emit("changeDrums", this.drumButtons);
     },
 
     isMouseDown(isIt) {
@@ -103,10 +106,6 @@ export default {
   },
 };
 </script>
-
-
-<style>
-</style>
 
 
 

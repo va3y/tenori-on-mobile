@@ -34,13 +34,6 @@ h1 {
   background-color: rgb(240, 237, 233);
 }
 
-.container {
-  display: flex;
-
-  flex-direction: column;
-
-}
-
 
 .nav-link {
   font-size: 90%;
