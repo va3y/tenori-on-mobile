@@ -15,4 +15,6 @@ To-do List
 
 [] Make a draw/click switch
 
+[*] Make a reset button
+
 [] Dark theme support 

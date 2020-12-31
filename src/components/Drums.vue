@@ -1,22 +1,13 @@
 <template>
-  <div
-    @mousedown="isMouseDown(true)"
-    @mouseup="isMouseDown(false)"
-    class="drum-cont"
-  >
+  <div @touchmove="touchStart" class="drum-cont">
     <div
       v-for="(column, columnIndex) in drumButtons"
       :key="columnIndex"
       class="row"
     >
-      <div
-        v-for="(button, rowIndex) in column"
-        :key="rowIndex"
-        class="hitbox"
-        @mouseenter="changeButton(columnIndex, rowIndex)"
-        @mouseup="changeButton(columnIndex, rowIndex)"
-      >
+      <div v-for="(button, rowIndex) in column" :key="rowIndex" class="hitbox">
         <div
+          :id="rowIndex * 16 + columnIndex + 256"
           class="button"
           :class="[
             { on: drumButtons[columnIndex][rowIndex].on },
@@ -89,14 +80,8 @@ export default {
     isMouseDown(isIt) {
       this.mouseDown = isIt;
     },
-
-    changeButton(col, row) {
-      if (this.mouseDown) {
-        this.drumButtons[col][row].on = !this.drumButtons[col][row].on; //switch boolean
-        this.$emit("changeDrums", this.drumButtons);
-      } else {
-        return;
-      }
+    changeDrumClick(col, row) {
+      this.drumButtons[col][row].on = false;
     },
   },
   watch: {

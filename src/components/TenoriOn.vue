@@ -1,13 +1,15 @@
 <template>
   <div @touchmove="touchStart" class="container">
+    <button class="reset-button" @click="resetAll">reset</button>
     <div v-for="(column, rowIndex) in buttons" :key="rowIndex" class="rows">
       <div
         class="hitbox"
         v-for="(button, columnIndex) in column"
         :key="columnIndex"
+        @touchstart="initialTouch(columnIndex, rowIndex)"
       >
         <div
-          :id='(rowIndex*16)+columnIndex'
+          :id="rowIndex * 16 + columnIndex"
           class="button"
           :class="[{ on: buttons[columnIndex][rowIndex].on }]"
         >
@@ -23,7 +25,7 @@
     </div>
     <transition name="slide-fade">
       <div v-show="showDrums" class="drum-cont">
-        <Drums @changeDrums="changeDrums($event)" class="drum-container" />
+        <Drums @changeDrums="updateDrums($event)" class="drum-container" />
 
         <div class="tempo-and-share">
           <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
@@ -59,7 +61,6 @@ export default {
     return {
       buttons: [], //2-dimensional array
       onButtons: [], //buttons that are ON!
-      gotDrums: [],
       mouseDown: {
         isIt: false,
         upOrDown: false,
@@ -68,6 +69,8 @@ export default {
       intervalsMain: [],
       showDrums: false,
       currentTempo: 128,
+      gotDrums: [],
+      addOrRemove: false,
     };
   },
   created() {
@@ -83,7 +86,6 @@ export default {
     } else {
       this.drawTable(null);
     }
-    this.onButtons = this.createOnButtonsArray();
   },
   mounted() {
     try {
@@ -108,32 +110,23 @@ export default {
           this.buttons[i].push({
             on: isOn,
             isHit: false,
-            startAnimation1: false,
-            startAnimation2: false,
+            startAnimation: false,
+            col: i,
+            row: j
           });
           counter++;
         }
       }
     },
     changeButton(col, row) {
-      if (this.mouseDown.isIt) {
-        this.changeButtonClick(col, row); //switch boolean
-      } else {
-        return;
-      }
+      this.buttons[col][row].on = this.addOrRemove;
     },
-    changeButtonClick(col, row) {
-      let isItOn = this.onButtons[col].indexOf(row);
-      if (isItOn === -1) {
-        this.onButtons[col].push(row);
-      } else {
-        this.onButtons[col].pop(isItOn);
-      }
-      this.buttons[col][row].on = !this.buttons[col][row].on; //switch boolean
+    changeDrums(col, row) {
+      this.gotDrums[col][row].on = this.addOrRemove;
+      console.log(col, row);
     },
-    isMouseDown(isIt, upOrDown) {
-      this.mouseDown.isIt = isIt;
-      this.mouseDown.upOrDown = upOrDown;
+    initialTouch(col, row) {
+      this.addOrRemove = !this.buttons[col][row].on;
     },
     touchStart(event) {
       try {
@@ -144,16 +137,20 @@ export default {
         );
         const col = Number(realTarget.id) % 16;
         const row = Math.floor(Number(realTarget.id) / 16);
-        if (col != 0 || row != 0){
-          this.changeButtonClick(col,row);
+
+        if (col != 0 || row != 0) {
+          if (row >= 16) {
+            this.changeDrums(col, row - 16); //change drums, it's not main buttons
+          } else {
+            this.changeButton(col, row);
+          }
         }
-        
       } catch (error) {
         console.log(error);
       }
     },
     clearHits(col) {
-      for (let i = 0; i < 16; i++) {
+      for (let i = 0; i < col.length; i++) {
         this.buttons[col][i].isHit = false;
       }
       for (let i = 0; i < 4; i++) {
@@ -192,14 +189,19 @@ export default {
     },
 
     step(row, soundMaker) {
-      this.onButtons[row].map((b) => {
-        soundMaker.playSound(b);
-        this.buttons[row][b].startAnimation = true;
-        this.buttons[row][b].isHit = true;
-        setTimeout(() => {
-          this.buttons[row][b].startAnimation = false;
-        }, 500);
+      this.buttons[row].map((b) => {
+        if (b.on === false) {
+          return;
+        } else {
+          soundMaker.playSound(b.row + 1);
+          this.buttons[row][b.row].startAnimation = true;
+          this.buttons[row][b.row].isHit = true;
+          setTimeout(() => {
+            this.buttons[row][b.row].startAnimation = false;
+          }, 500);
+        }
       });
+
       for (let button = 0; button < 4; button++) {
         if (this.gotDrums[row][button].on) {
           soundMaker.playDrum(button);
@@ -207,8 +209,7 @@ export default {
         }
       }
     },
-
-    changeDrums(drumArray) {
+    updateDrums(drumArray) {
       this.gotDrums = drumArray;
     },
     setSpeed(v) {
@@ -216,12 +217,12 @@ export default {
       console.log("v is ", v);
       this.startPlaying();
     },
-    createOnButtonsArray() {
-      const arr = new Array(16);
-      for (var i = 0; i < arr.length; i++) {
-        arr[i] = [];
-      }
-      return arr;
+    resetAll() {
+      this.buttons.map((col) => {
+        col.map((b) => {
+          b.on = false;
+        });
+      });
     },
   },
 };
@@ -271,6 +272,13 @@ input {
 
   width: 4.5vw;
   height: 4.5vw;
+}
+
+.reset-button {
+  margin-bottom: 10px;
+  border-style: solid;
+  border: 2px black solid;
+  padding: 5px;
 }
 
 @keyframes start-ripple {
