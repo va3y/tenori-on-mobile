@@ -1,14 +1,11 @@
 <template>
   <div id="app">
-      <router-link to="/about" 
-    class="nav-link">About</router-link>
+    <router-link to="/about" class="nav-link"> About </router-link>|
+    <router-link to="/saves" class="nav-link"> Saves </router-link>
 
     <div>
-      <TenoriOn
-        msg="Welcome to Your Vue.js App"
-      />
+      <TenoriOn msg="Welcome to Your Vue.js App" />
     </div>
-    
   </div>
 </template>
 
@@ -31,13 +28,10 @@ export default {
 </script>
 
 <style scoped>
-
 .nav-link {
   font-size: 100%;
   font-family: monospace;
-  
+
   color: rgb(212, 161, 151);
 }
-
-
 </style>

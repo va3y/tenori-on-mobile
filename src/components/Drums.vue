@@ -5,7 +5,13 @@
       :key="columnIndex"
       class="row"
     >
-      <div v-for="(button, rowIndex) in column" :key="rowIndex" class="hitbox">
+      <div
+        v-for="(button, rowIndex) in column"
+        :key="rowIndex"
+        class="hitbox"
+        @touchstart="emitTouchEvent(columnIndex, rowIndex)"
+        @click="changeDrumClick(columnIndex, rowIndex)"
+      >
         <div
           :id="rowIndex * 16 + columnIndex + 256"
           class="button"
@@ -81,7 +87,11 @@ export default {
       this.mouseDown = isIt;
     },
     changeDrumClick(col, row) {
-      this.drumButtons[col][row].on = false;
+      this.drumButtons[col][row].on = !this.drumButtons[col][row].on;
+    },
+    emitTouchEvent(col, row) {
+      console.log(this.drumButtons[col][row].on);
+      this.$emit("initialTouchDrums", this.drumButtons[col][row].on);
     },
   },
   watch: {

@@ -6,7 +6,7 @@
         class="hitbox"
         v-for="(button, columnIndex) in column"
         :key="columnIndex"
-        @touchstart="initialTouch(columnIndex, rowIndex)"
+        @touchstart="initialTouchButtons(columnIndex, rowIndex)"
       >
         <div
           :id="rowIndex * 16 + columnIndex"
@@ -25,7 +25,11 @@
     </div>
     <transition name="slide-fade">
       <div v-show="showDrums" class="drum-cont">
-        <Drums @changeDrums="updateDrums($event)" class="drum-container" />
+        <Drums
+          @changeDrums="updateDrums($event)"
+          class="drum-container"
+          @initialTouchDrums="addOrRemove = !$event"
+        />
 
         <div class="tempo-and-share">
           <TempoInput @changeTempo="setSpeed($event)" class="bpm" />
@@ -38,6 +42,7 @@
         </div>
       </div>
     </transition>
+    <DrawSwitch @changeDrawMode="this.drawMode = $event" />
   </div>
 </template>
 
@@ -46,6 +51,7 @@
 import SoundMaker from "../helper";
 import Drums from "./Drums.vue";
 import TempoInput from "./TempoInput.vue";
+import DrawSwitch from "./DrawSwitch.vue";
 import Save from "./Save.vue";
 import Encoder from "../encoder.js";
 
@@ -55,6 +61,7 @@ export default {
     Drums,
     TempoInput,
     Save,
+    DrawSwitch,
   },
   props: ["tempo"],
   data() {
@@ -71,6 +78,7 @@ export default {
       currentTempo: 128,
       gotDrums: [],
       addOrRemove: false,
+      drawMode: false,
     };
   },
   created() {
@@ -112,7 +120,7 @@ export default {
             isHit: false,
             startAnimation: false,
             col: i,
-            row: j
+            row: j,
           });
           counter++;
         }
@@ -123,12 +131,19 @@ export default {
     },
     changeDrums(col, row) {
       this.gotDrums[col][row].on = this.addOrRemove;
-      console.log(col, row);
     },
-    initialTouch(col, row) {
+    initialTouchButtons(col, row) {
       this.addOrRemove = !this.buttons[col][row].on;
+      this.changeButton(col, row);
+    },
+    initialTouchDrums(col, row) {
+      this.addOrRemove = !this.drumButtons[col][row].on;
+      this.changeDrums(col, row);
     },
     touchStart(event) {
+      if (!this.drawMode) {
+        return;
+      }
       try {
         const myLocation = event.changedTouches[0];
         const realTarget = document.elementFromPoint(
@@ -193,7 +208,7 @@ export default {
         if (b.on === false) {
           return;
         } else {
-          soundMaker.playSound(b.row + 1);
+          soundMaker.playSound(b.row);
           this.buttons[row][b.row].startAnimation = true;
           this.buttons[row][b.row].isHit = true;
           setTimeout(() => {
@@ -219,6 +234,11 @@ export default {
     },
     resetAll() {
       this.buttons.map((col) => {
+        col.map((b) => {
+          b.on = false;
+        });
+      });
+      this.gotDrums.map((col) => {
         col.map((b) => {
           b.on = false;
         });

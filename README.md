@@ -7,14 +7,16 @@ To-do List
 
 [*] Make setInterval more stable
 
-[] Create a page with saved presets
+[*] Create a page with saved presets
 
 [*] Set squares max width
 
-[*] Make touch system work
+[*] Make touch events work
 
-[] Make a draw/click switch
+[*] Make a draw/click switch
 
 [*] Make a reset button
+
+[] Make decent layout
 
 [] Dark theme support 
