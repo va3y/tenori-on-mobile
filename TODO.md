@@ -1,4 +1,4 @@
-###To-do List
+### To-do List
 
 - [x] Make setInterval more stable
 
@@ -14,12 +14,12 @@
 
 - [x] Make decent layout
 
-[] Dark theme support 
+[ ] Dark theme support 
 
-[] Set Icon
+[ ] Set Icon
 
-[] Set starting screen
+[ ] Set starting screen
 
-[] Make drums stop when closing them
+[ ] Make drums stop when closing them
 
-[] Make view for init save screen
+[ ] Make view for init save screen
