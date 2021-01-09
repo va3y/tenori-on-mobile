@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-link to="/about" class="nav-link"> About </router-link>|
+    <router-link to="/about" class="nav-link"> About</router-link> |
     <router-link to="/saves" class="nav-link"> Saves </router-link>
 
     <div>
@@ -27,9 +27,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .nav-link {
-  font-size: 100%;
+  font-size: 14px;
   font-family: monospace;
 
   color: rgb(212, 161, 151);

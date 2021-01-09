@@ -1,6 +1,9 @@
 <template>
   <div @touchmove="touchStart" class="container">
-    <button class="reset-button" @click="resetAll">reset</button>
+    <div class="top-row">
+      <button class="reset-button" @click="resetAll">reset</button>
+      <DrawSwitch @changeDrawMode="this.drawMode = $event" />
+    </div>
     <div v-for="(column, rowIndex) in buttons" :key="rowIndex" class="rows">
       <div
         class="hitbox"
@@ -42,7 +45,6 @@
         </div>
       </div>
     </transition>
-    <DrawSwitch @changeDrawMode="this.drawMode = $event" />
   </div>
 </template>
 
@@ -245,10 +247,24 @@ export default {
       });
     },
   },
+  unmounted() {
+    for (let i = 0; i < this.intervalsMain.length; i++) {
+      clearInterval(this.intervalsMain[i]);
+      this.intervalsMain.pop(i);
+    }
+    this.resetAll();
+  },
 };
 </script>
 
 <style>
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .container {
   margin-top: 2em;
   margin-bottom: 2em;
@@ -280,7 +296,11 @@ input {
   display: flex;
   justify-content: center;
 }
-
+.hitbox {
+  --size: calc(100vw / 16 - 2px);
+  width: var(--size);
+  height: var(--size);
+}
 .button {
   border: 1px solid rgb(165, 165, 165);
   border-radius: 20%;
@@ -289,16 +309,14 @@ input {
   display: flex;
   justify-content: center;
   align-content: center;
-
-  width: 4.5vw;
-  height: 4.5vw;
+  width: 75%;
+  height: 75%;
 }
 
 .reset-button {
-  margin-bottom: 10px;
-  border-style: solid;
-  border: 2px black solid;
-  padding: 5px;
+  border-style: none;
+  font-family: monospace;
+  font-size: 14px;
 }
 
 @keyframes start-ripple {

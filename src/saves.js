@@ -1,55 +1,61 @@
-import {
-  Plugins,
-  FilesystemEncoding,
-  FilesystemDirectory,
-} from "@capacitor/core";
+import { NativeStorage } from "@ionic-native/native-storage";
 
-const { Filesystem } = Plugins;
 
 export async function createSavesFile() {
+  console.log("INITIALIZING SAVE");
+  
+  let result;
   try {
-    const result = await Filesystem.writeFile({
-      path: "./saves.txt",
-      //temporary preset (LEAVE EMPTY in prod!)
-      data: "{}",
-      directory: FilesystemDirectory.Data,
-      encoding: FilesystemEncoding.UTF8,
-    });
+    result = await NativeStorage.getItem("saves");
+    const hasKey = "presets" in result;
+    if (!hasKey) {
+      console.log('it doesnt have a key -presets-')
+      result.presets = [];
+    }
+    console.log('created preset key!')
+    await NativeStorage.setItem("saves", result);
     console.log("Wrote file", result);
-  } catch (e) {
-    console.error("Unable to write file", e);
+  } catch (err) {
+    console.log(err);
+    console.log("COULDNT READ! OK I WILL CREATE IT");
+    const obj = { "presets": [] };
+    await NativeStorage.setItem("saves", obj);
   }
 }
 
 export async function fileRead() {
-  let contents = await Filesystem.readFile({
-    path: "./saves.txt",
-    directory: FilesystemDirectory.Data,
-    encoding: FilesystemEncoding.UTF8,
-  });
+  console.log('started reading')
+  try {
+      const gotData = await NativeStorage.getItem("saves");
+      console.log("I HAVE READ A FILE! IT IS: ", gotData.presets);
+      return gotData.presets;
+      } catch (error) {
+    console.log("ERROR ON READING!!");
+  }
 
-  console.log(JSON.parse(contents.data));
-  return JSON.parse(contents.data);
 }
 
-export const addSave = async function(query) {
-  let contents = await Filesystem.readFile({
-    path: "./saves.txt",
-    directory: FilesystemDirectory.Data,
-    encoding: FilesystemEncoding.UTF8,
-  });
-  const output = JSON.parse(contents.data);
-  output.presets = output.presets || [];
-  await output.presets.push({
-    query: query,
-    date: new Date().getTime()
-  });
-  console.log(output);
-  console.log(typeof output);
-  await Filesystem.writeFile({
-    path: "./saves.txt",
-    data: JSON.stringify(output),
-    directory: FilesystemDirectory.Data,
-    encoding: FilesystemEncoding.UTF8,
-  });
+export async function addSave(query) {
+  try {
+    let output = await NativeStorage.getItem("saves");
+    console.log('saved it')
+    if (!('presets' in output)) {
+      output.presets = []
+    }
+    output.presets.push({
+      query: query,
+      date: new Date().getTime(),
+    });
+    console.log("I HAVE WROTE A FILE! IT IS: ", output.presets);
+    await NativeStorage.setItem("saves", output);
+    console.log("saved!");
+  } catch (error) {
+    console.log("ERROR ON SAVING!!");
+  }
+}
+
+export const deleteSave = async function(index) {
+  const contents = await NativeStorage.getItem("saves");
+  await contents.presets.pop(index);
+  await NativeStorage.setItem("saves", contents);
 };

@@ -1,49 +1,29 @@
-export default class SoundMaker { 
-    constructor() {
-        this.message = 'hello world';
-        this.soundsArray = this._loadSounds();
-    }
-
-    _loadSounds() {
-        const soundsArray = []
-        for (let index = 0; index < 16; index++) {
-            const sound = new Audio(require(`./assets/s${index+1}.mp3`));
-            sound.type = "audio/mp3"; 
-            soundsArray.push(sound)
-            
-        }
-
-        return soundsArray;
-    }
-
-
-
-    playSound(which) {
-        const sound = this.loadSound(which);
-        sound.play();
-        //const audio = this.soundsArray[which];
-        //audio.play();
-    }
-
-    playDrum(which) {
-        const drum = this.loadDrum(which);
-        drum.play();
-    }
-
-    loadSound(num) {
-        const sound = new Audio(require(`./assets/s${num + 1}.mp3`));
-        sound.type = "audio/mp3"; 
-        return sound
-    }
-
-    loadDrum(num) {
-        const drum = new Audio(require(`./assets/d${num + 1}.mp3`));
-        drum.type = "audio/mp3"; 
-        return drum
-    }
-
-
-
+import { NativeAudio } from "@ionic-native/native-audio";
+// import { File } from "@ionic-native/file";
+// let filePath = File.applicationDirectory + "public/assets/";
+let filePath = "assets/";
+for (let index = 0; index < 16; index++) {
+  NativeAudio.preloadSimple(
+    "s" + index.toString(),
+    filePath + `s${index + 1}.mp3`
+  );
 }
+for (let index = 0; index < 4; index++) {
+  NativeAudio.preloadSimple(
+    "d" + index.toString(),
+    filePath + `d${index + 1}.mp3`
+  );
+}
+export default class SoundMaker {
+  constructor() {
+    this.message = "hello world";
+  }
 
+  playSound(which) {
+    NativeAudio.play("s" + which.toString());
+  }
 
+  playDrum(which) {
+    NativeAudio.play("d" + which.toString());
+  }
+}

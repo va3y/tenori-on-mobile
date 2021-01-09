@@ -1,9 +1,7 @@
 <template>
   <div id="app">
     <h1>Tenori-on</h1>
-           <keep-alive>
     <router-view />
-    </keep-alive>
   </div>
 </template>
 
@@ -25,6 +23,8 @@ export default {
   color: #2c3e50;
 }
 
+
+
 h1 {
   margin-top: 1em;
   margin-bottom:0px;
@@ -42,5 +42,7 @@ h1 {
   margin-top: 20em;
   }
 
-
+a, a:visited {
+  color: rgb(212, 161, 151);
+}
 </style>

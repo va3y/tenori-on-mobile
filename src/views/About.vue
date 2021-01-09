@@ -7,7 +7,6 @@
         of a hand-held screen comprised from sixteen-by-sixteen grid of LED
         switches. Any of these switches may be activated in a number of
         different ways to create sounds.
-
         <br />
         <br />
         Here's what the creator has to say:
@@ -29,7 +28,7 @@
       <span class="credentials">
       Made with ♥ by @valerih12
       <br />
-      <a href="https://github.com/valerih12"> My Github page</a>
+      <a href="https://github.com/valerih12">Github page</a>
     </span>
 
       </div>

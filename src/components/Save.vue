@@ -6,7 +6,7 @@
       v-if="drumsOutput"
       :href="getLink"
       class="savelink"
-      >Here's a link to share 🎉</a
+      >Pattern saved! 🎉</a
     >
   </div>
 </template>
@@ -30,7 +30,6 @@ export default {
       this.buttonsOutput = Encoder.encode(this.buttons);
       this.drumsOutput = Encoder.encode(this.drums);
       await addSave(this.getLink);
-      
     },
     getCurrURL() {
       console.log(window.location.href.split("?")[0])
