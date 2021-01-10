@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="MissingDefaultResource">
+        <ignore path="src/main/res/drawable-port-hdpi/splash.png" />
+        <ignore path="src/main/res/drawable-port-ldpi/splash.png" />
+        <ignore path="src/main/res/drawable-port-mdpi/splash.png" />
+        <ignore path="src/main/res/drawable-port-xhdpi/splash.png" />
+        <ignore path="src/main/res/drawable-port-xxhdpi/splash.png" />
+        <ignore path="src/main/res/drawable-port-xxxhdpi/splash.png" />
+    </issue>
+</lint>

@@ -46,8 +46,7 @@ export default {
 
 .switch-cont input[type="radio"]:checked + label {
   color: rgb(212, 161, 151);
-  font-weight: 800;
-  text-decoration: underline;
+  font-weight: 1000;
 }
 
 label {

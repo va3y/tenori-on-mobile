@@ -7,11 +7,20 @@
 
 <script>
 
+
+import { Plugins } from "@capacitor/core";
+const { SplashScreen } = Plugins;
 export default {
-  name: 'App',
-  components: {
+  name: "App",
+  components: {},
+  created() {
+
+
   },
-}
+  mounted() {
+    SplashScreen.hide();
+  }
+};
 </script>
 
 <style>
@@ -23,26 +32,25 @@ export default {
   color: #2c3e50;
 }
 
-
-
 h1 {
   margin-top: 1em;
-  margin-bottom:0px;
+  margin-bottom: 0px;
 }
 
 * {
   background-color: rgb(240, 237, 233);
 }
 
-
 .nav-link {
   font-size: 90%;
   font-family: monospace;
   color: rgb(212, 161, 151);
-  margin-top: 20em;
-  }
+  font-size: 14px;
+  font-family: monospace;
+}
 
-a, a:visited {
+a,
+a:visited {
   color: rgb(212, 161, 151);
 }
 </style>

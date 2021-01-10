@@ -2,6 +2,11 @@
   <div>
     <router-link to="/" class="nav-link">Back</router-link>
     <div class="saves-cont">
+      <div v-if="saves.length === 0" class="save placeholder">
+        <div class="empty-text">Your presets will be stored here</div>
+        <img class="img-placeholder" src="../assets/flower.png" alt="" />
+      </div>
+
       <div v-for="(save, index) in saves" :key="index" class="save">
         <div class="time">
           {{ getDate(index) }} |
@@ -18,9 +23,11 @@
 
           <div>
             <ion-icon
+              
               @click="share(save.query)"
               name="share"
               size="large"
+              
             ></ion-icon>
           </div>
           <div>
@@ -87,8 +94,14 @@ export default {
     },
     share(link) {
       console.log("share!");
-      const externalUrl = 'https://tenori-on.netlify.app/' + '?' + link.split("?")[1];
-      socialSharing.share("Check out my cool pattern! \n", "MEDIUM", null, externalUrl);
+      const externalUrl =
+        "https://tenori-on.netlify.app/" + "?" + link.split("?")[1];
+      socialSharing.share(
+        "Check out my cool pattern! \n",
+        "MEDIUM",
+        null,
+        externalUrl
+      );
     },
   },
 };
@@ -103,9 +116,10 @@ export default {
 }
 
 .save {
-  border: 2px solid rgb(161, 161, 161);
-  margin: 10px;
-  padding: 10px;
+  box-sizing: border-box;
+  outline: 3px solid rgb(161, 161, 161);
+  margin: 15px;
+  padding: 15px;
   height: 100%;
   display: flex;
   justify-content: space-between;
@@ -113,7 +127,13 @@ export default {
 }
 
 .time {
-  margin-left: 20px;
+  margin-left: 5px;
+  font-family: monospace;
+  font-weight: 600;
+}
+
+ion-icon{ 
+  width: 200px;
 }
 
 .icons {
@@ -135,5 +155,23 @@ ion-icon {
   padding: 5px;
   color: rgb(212, 161, 151);
   border-radius: 10%;
+}
+
+.placeholder {
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+  display: flex;
+  padding: 0px;
+}
+
+.empty-text {
+  padding: 20px;
+  padding-left: 40px;
+}
+
+.img-placeholder {
+  align-self: flex-end;
+  align-items: flex-end;
 }
 </style>

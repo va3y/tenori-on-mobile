@@ -28,10 +28,5 @@ export default {
 </script>
 
 <style>
-.nav-link {
-  font-size: 14px;
-  font-family: monospace;
 
-  color: rgb(212, 161, 151);
-}
 </style>

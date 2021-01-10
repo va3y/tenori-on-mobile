@@ -5,19 +5,17 @@ import { IonicVue } from "@ionic/vue";
 
 import { createSavesFile } from "./saves";
 
-createSavesFile();
+import { StatusBar } from "@ionic-native/status-bar";
 
-// import { fs } from "fs";
-// fs.symlink("assets/www", "assets/public/", (e) => {
-//   if(e) {
-//     console.log(e)
-//   } else {
-//     console.log('LINK MADE')
-//   }
-// }); 
+
+StatusBar.backgroundColorByHexString("#d3a096");
+StatusBar.styleDefault();
+
 
 
 createApp(App)
   .use(router)
   .use(IonicVue)
   .mount('#app')
+
+createSavesFile();

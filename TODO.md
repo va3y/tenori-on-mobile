@@ -12,14 +12,14 @@
 
 - [x] Make a reset button
 
-- [x] Make decent layout
+- [±] Make decent layout
 
-[ ] Dark theme support 
+- [ ] Dark theme support 
 
-[ ] Set Icon
+- [x] Set Icon
 
-[ ] Set starting screen
+- [x] Set starting screen
 
-[ ] Make drums stop when closing them
+- [ ] Make drums stop when closing them
 
-[ ] Make view for init save screen
+- [x] Make view for init save screen

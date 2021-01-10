@@ -266,9 +266,8 @@ export default {
 }
 
 .container {
-  margin-top: 2em;
-  margin-bottom: 2em;
   user-select: none;
+  
 }
 
 @keyframes on-appear {
